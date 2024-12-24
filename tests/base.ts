@@ -1,4 +1,5 @@
 import { Stagehand } from '@browserbasehq/stagehand';
+import { z } from 'zod';
 type AvailableModel = 'gpt-4o-mini';
 export abstract class UITest {
   protected _modelName: AvailableModel;
@@ -17,8 +18,21 @@ export abstract class UITest {
   async act(...p: Parameters<Stagehand['act']>) {
     return await this._stagehand.act(...p);
   }
-  async extract(...p: Parameters<Stagehand['extract']>) {
+  async extract<T extends z.AnyZodObject>(
+    ...p: [
+      {
+        instruction: string;
+        schema: T;
+        modelName?: AvailableModel;
+        domSettleTimeoutMs?: number;
+      }
+    ]
+  ): Promise<z.infer<T>> {
     return await this._stagehand.extract(...p);
+  }
+
+  async observe(...p: Parameters<Stagehand['observe']>) {
+    return await this._stagehand.observe(...p);
   }
 
   get page() {
