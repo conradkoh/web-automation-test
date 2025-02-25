@@ -8,6 +8,8 @@ export abstract class UITest {
     this._stagehand = new Stagehand({
       env: 'LOCAL',
       enableCaching: true,
+      headless: false,
+      modelName: 'gpt-4o-mini',
     });
   }
   async init() {
@@ -16,7 +18,7 @@ export abstract class UITest {
     });
   }
   async act(...p: Parameters<Stagehand['act']>) {
-    return await this._stagehand.act(...p);
+    return await this._stagehand.page.act(...p);
   }
   async extract<T extends z.AnyZodObject>(
     ...p: [
@@ -28,11 +30,11 @@ export abstract class UITest {
       }
     ]
   ): Promise<z.infer<T>> {
-    return await this._stagehand.extract(...p);
+    return await this._stagehand.page.extract(...p);
   }
 
   async observe(...p: Parameters<Stagehand['observe']>) {
-    return await this._stagehand.observe(...p);
+    return await this._stagehand.page.observe(...p);
   }
 
   get page() {
